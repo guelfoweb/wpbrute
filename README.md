@@ -1,12 +1,28 @@
 wpbrute
 =======
 
-Wordpress user enumeration and password bruteforce
+Wordpress user enumeration and password bruteforce.
 
-User Enumeration:
+<b>User Enumeration:</b>
 
-$ ./wpbrute.sh --url=www.example.com
+<code>$ ./wpbrute.sh --url=www.example.com</code>
 
-Password Bruteforce:
+<code>[+] Username or nickname enumeration</code>
 
-$ ./wpbrute.sh --url=www.example.com --user=admin --wordlist=wordlist.txt
+<code>admin</code>
+
+<code>testuser</code>
+
+<b>Password Bruteforce:</b>
+
+<code> ./wpbrute.sh --url=www.example.com --user=admin --wordlist=wordlist.txt</code>
+
+<code>[+] Bruteforcing user [admin]</code>
+
+<code>123456</code>
+
+<code>test123</code>
+
+<code>123test123</code>
+
+<code>The password is: 123test123</code>
