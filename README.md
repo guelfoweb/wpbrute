@@ -1,4 +1,4 @@
-wpbrute
+WPBRUTE
 =======
 
 Wordpress user enumeration and password bruteforce.
