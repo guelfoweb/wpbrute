@@ -9,7 +9,7 @@
 # --------------------------------------------------------------------------------
 #
 
-# v.1.2
+# v.1.3
 
 USER_AGENT="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:21.0) Gecko/20130331 Firefox/21.0"
 TIMEOUT=1
@@ -79,5 +79,4 @@ cat "$WP_PASSWORD" | while read line;
 	done
 
 # Remove cookie
-
 rm "$COOKIE_PATH" 2> /dev/null
