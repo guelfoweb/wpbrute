@@ -3,18 +3,20 @@ wpbrute
 
 Wordpress user enumeration and password bruteforce.
 
-<b>User Enumeration:</b>
-<code><br /><br />
-$ ./wpbrute.sh --url=www.example.com<br />
-[+] Username or nickname enumeration<br />
-admin<br />
-testuser</code>
+####User Enumeration:
+<code>$ ./wpbrute.sh --url=www.example.com</code>
+<pre>
+[+] Username or nickname enumeration
+admin
+testuser
+</pre>
 
-<b>Password Bruteforce:</b>
-<code><br /><br />
-$ ./wpbrute.sh --url=www.example.com --user=admin --wordlist=wordlist.txt<br />
-[+] Bruteforcing user [admin]<br />
-123456<br />
-test123<br />
-123test123<br />
-The password is: 123test123</code>
+####Password Bruteforce:
+<code>$ ./wpbrute.sh --url=www.example.com --user=admin --wordlist=wordlist.txt</code>
+<pre>
+[+] Bruteforcing user [admin]
+123456
+test123
+123test123
+The password is: 123test123
+</pre>
