@@ -9,7 +9,8 @@
 # --------------------------------------------------------------------------------
 #
 
-# v.1.3
+# v.1.4
+# update: 09/10/2020 (dd/mm/aaaa)
 
 USER_AGENT="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:21.0) Gecko/20130331 Firefox/21.0"
 TIMEOUT=1
@@ -32,9 +33,13 @@ test_url(){
 # User Enumeration
 user_enum(){
 	echo "[+] Username or nickname enumeration"
-	for i in {1..5} 
+	for i in {1..10} 
 	do
-		curl -s -A "$USER_AGENT" -L -i $WP_URL/?author=$i | grep -E -o "\" title=\"View all posts by [a-sz0-9A-Z\-\.]*.*\" |Location:.*" | sed 's/\// /g' | grep -o "author .*" | sed 's/author //g' | sed 's/\"//g' | grep -v "^$"
+		users=($(curl -s -A "$USER_AGENT" -L -i $WP_URL/?author=$i | grep "\/author\/.*\/?mode" | cut -d\/ -f3))
+		if [[ $users ]]; then 
+			echo $users 
+			echo $WP_URL/?author=$i
+		fi
 	done
 	exit
 }
